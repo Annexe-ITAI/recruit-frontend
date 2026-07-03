@@ -1,3 +1,8 @@
+
+// =============================
+// SESSION CHECK
+// =============================
+
 const session = localStorage.getItem("loggedIn");
 
 if (!session) {
@@ -6,33 +11,52 @@ if (!session) {
 
 const RENDER_URL = "https://everecruiter-api.onrender.com";
 
-// -----------------------------
+// =============================
 // Load user data
-// -----------------------------
+// =============================
+
 async function loadDashboard() {
   try {
-    const res = await fetch(`${RENDER_URL}/api/me`);
+    const res = await fetch(`${RENDER_URL}/api/me`, {
+      headers: {
+        Authorization: localStorage.getItem("session_token") || ""
+      }
+    });
+
+    if (!res.ok) {
+      throw new Error("Failed to load user data");
+    }
+
     const data = await res.json();
+
+    // store session AFTER successful fetch
+    localStorage.setItem("loggedIn", "true");
+
+    if (data?.main_character?.character_id) {
+      localStorage.setItem("character_id", data.main_character.character_id);
+    }
 
     renderDashboard(data);
 
   } catch (err) {
     console.error("Failed to load dashboard", err);
+
+    // optional safety fallback
+    localStorage.removeItem("loggedIn");
+    window.location.href = "/";
   }
 }
 
-localStorage.setItem("loggedIn", "true");
-localStorage.setItem("character_id", data.character_id);
+// =============================
+// RENDER UI
+// =============================
 
-// -----------------------------
-// Render UI
-// -----------------------------
 function renderDashboard(data) {
   const status = document.getElementById("status");
   const main = document.getElementById("mainCharacter");
   const alts = document.getElementById("alts");
 
-  // Status line
+  // Status
   status.innerHTML = `
     <p>✔ EVE Authenticated</p>
     <p>✔ Discord: ${data.discord?.linked ? "Linked" : "Not Linked"}</p>
@@ -49,24 +73,31 @@ function renderDashboard(data) {
 
   // Alts
   alts.innerHTML = "";
-  data.alts.forEach(c => {
-    const div = document.createElement("div");
-    div.className = "card";
-    div.innerHTML = `
-      <p><b>${c.name}</b></p>
-      <p>Corp: ${c.corporation}</p>
-      <p>✔ Registered</p>
-    `;
-    alts.appendChild(div);
-  });
+
+  if (Array.isArray(data.alts)) {
+    data.alts.forEach(c => {
+      const div = document.createElement("div");
+      div.className = "card";
+      div.innerHTML = `
+        <p><b>${c.name}</b></p>
+        <p>Corp: ${c.corporation}</p>
+        <p>✔ Registered</p>
+      `;
+      alts.appendChild(div);
+    });
+  }
 }
 
-// -----------------------------
-// Add character flow
-// -----------------------------
+// =============================
+// ADD CHARACTER FLOW
+// =============================
+
 function addCharacter() {
   window.location.href = `${RENDER_URL}/auth/eve/login`;
 }
 
-// Run on load
+// =============================
+// INIT
+// =============================
+
 loadDashboard();
