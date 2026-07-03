@@ -1,29 +1,109 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Dashboard</title>
-  <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ITAI Recruitment Dashboard</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #0b0f17;
+      color: #e6e6e6;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 40px auto;
+      padding: 20px;
+    }
+
+    .card {
+      background: #151c2b;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+
+    .header {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    #portrait {
+      width: 96px;
+      height: 96px;
+      border-radius: 12px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 24px;
+    }
+
+    .muted {
+      color: #9aa4b2;
+      font-size: 14px;
+    }
+
+    button {
+      padding: 10px 14px;
+      background: #2d6cdf;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #2457b5;
+    }
+
+    .row {
+      margin-top: 10px;
+    }
+  </style>
 </head>
+
 <body>
 
-<div class="container">
+  <div class="container">
 
-  <h1>Recruitment Dashboard</h1>
+    <!-- HEADER -->
+    <div class="card header">
+      <img id="portrait" src="" alt="portrait" />
+      <div>
+        <h1 id="characterName">Loading...</h1>
+        <div class="muted" id="corp">Corporation: ...</div>
+        <div class="muted" id="alliance">Alliance: ...</div>
+      </div>
+    </div>
 
-  <div id="status"></div>
+    <!-- STATUS -->
+    <div class="card">
+      <h3>Recruitment Status</h3>
+      <div id="status">Loading...</div>
+    </div>
 
-  <div id="mainCharacter" class="card"></div>
+    <!-- RAW DATA -->
+    <div class="card">
+      <h3>Character Data</h3>
+      <div class="row" id="characterId"></div>
+      <div class="row" id="corporationId"></div>
+      <div class="row" id="allianceId"></div>
+    </div>
 
-  <h3>Alt Characters</h3>
-  <div id="alts"></div>
+    <!-- ACTIONS -->
+    <div class="card">
+      <h3>Actions</h3>
+      <button onclick="logout()">Logout</button>
+    </div>
 
-  <button onclick="addCharacter()" class="button">
-    + Add Character
-  </button>
+  </div>
 
-</div>
-
-<script src="app.js"></script>
-
+  <script src="app.js"></script>
 </body>
 </html>
