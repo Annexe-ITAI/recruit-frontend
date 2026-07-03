@@ -1,22 +1,42 @@
-
 // =============================
-// SESSION CHECK
+// CONFIG
 // =============================
-
-
-const session = localStorage.getItem("loggedIn");
-
-if (!session) {
-  window.location.href = "/";
-}
-
-// mark session immediately on page load
-localStorage.setItem("loggedIn", "true");
 
 const RENDER_URL = "https://everecruiter-api.onrender.com";
 
 // =============================
-// Load user data
+// AUTH
+// =============================
+
+function getSession() {
+  return localStorage.getItem("loggedIn");
+}
+
+function requireAuth() {
+  const session = getSession();
+
+  if (!session) {
+    window.location.href = "/";
+    return false;
+  }
+
+  return true;
+}
+
+// =============================
+// INIT
+// =============================
+
+async function init() {
+  // 1. Check auth FIRST
+  if (!requireAuth()) return;
+
+  // 2. Load dashboard data
+  await loadDashboard();
+}
+
+// =============================
+// LOAD USER DATA
 // =============================
 
 async function loadDashboard() {
@@ -33,20 +53,23 @@ async function loadDashboard() {
 
     const data = await res.json();
 
-    // store session AFTER successful fetch
+    // 3. Only confirm session AFTER successful auth + data load
     localStorage.setItem("loggedIn", "true");
 
     if (data?.main_character?.character_id) {
       localStorage.setItem("character_id", data.main_character.character_id);
     }
 
+    // 4. Render UI
     renderDashboard(data);
 
   } catch (err) {
     console.error("Failed to load dashboard", err);
 
-    // optional safety fallback
+    // kill session if backend fails auth
     localStorage.removeItem("loggedIn");
+    localStorage.removeItem("session_token");
+
     window.location.href = "/";
   }
 }
@@ -101,7 +124,7 @@ function addCharacter() {
 }
 
 // =============================
-// INIT
+// START APP
 // =============================
 
-loadDashboard();
+init();
