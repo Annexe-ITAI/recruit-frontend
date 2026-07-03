@@ -5,78 +5,42 @@
 const RENDER_URL = "https://everecruiter-api.onrender.com";
 
 // =============================
-// AUTH
+// AUTH GUARD (single source of truth)
 // =============================
 
-function getSession() {
-  return localStorage.getItem("loggedIn");
-}
+async function authGuard() {
+  const token = localStorage.getItem("session_token");
 
-function requireAuth() {
-  const session = getSession();
-
-  if (!session) {
+  if (!token) {
     window.location.href = "/";
-    return false;
+    return null;
   }
 
-  return true;
-}
-
-// =============================
-// INIT
-// =============================
-
-async function init() {
-  // 
-  localStorage.setItem("loggedIn", "true");
-  
-  if (!requireAuth()) return;
-
-  // 2. Load dashboard data
-  await loadDashboard();
-}
-
-// =============================
-// LOAD USER DATA
-// =============================
-
-async function loadDashboard() {
   try {
     const res = await fetch(`${RENDER_URL}/api/me`, {
       headers: {
-        Authorization: localStorage.getItem("session_token") || ""
+        Authorization: token
       }
     });
 
     if (!res.ok) {
-      throw new Error("Failed to load user data");
+      throw new Error("Invalid session");
     }
 
-    const data = await res.json();
-
-
-
-    if (data?.main_character?.character_id) {
-      localStorage.setItem("character_id", data.main_character.character_id);
-    }
-
-    // 4. Render UI
-    renderDashboard(data);
-
+    return await res.json();
   } catch (err) {
-    console.error("Failed to load dashboard", err);
+    console.error("Auth failed:", err);
 
-    // kill session if backend fails auth
-    localStorage.removeItem("loggedIn");
     localStorage.removeItem("session_token");
+    localStorage.removeItem("character_id");
 
     window.location.href = "/";
+    return null;
   }
 }
 
 // =============================
-// RENDER UI
+// LOAD DASHBOARD DATA
 // =============================
 
 function renderDashboard(data) {
@@ -84,13 +48,11 @@ function renderDashboard(data) {
   const main = document.getElementById("mainCharacter");
   const alts = document.getElementById("alts");
 
-  // Status
   status.innerHTML = `
     <p>✔ EVE Authenticated</p>
     <p>✔ Discord: ${data.discord?.linked ? "Linked" : "Not Linked"}</p>
   `;
 
-  // Main character
   main.innerHTML = `
     <div class="card-title">Main Character</div>
     <p><b>${data.main_character.name}</b></p>
@@ -99,7 +61,6 @@ function renderDashboard(data) {
     <p>✔ Registered</p>
   `;
 
-  // Alts
   alts.innerHTML = "";
 
   if (Array.isArray(data.alts)) {
@@ -122,6 +83,22 @@ function renderDashboard(data) {
 
 function addCharacter() {
   window.location.href = `${RENDER_URL}/auth/eve/login`;
+}
+
+// =============================
+// INIT
+// =============================
+
+async function init() {
+  const user = await authGuard();
+
+  if (!user) return;
+
+  if (user?.main_character?.character_id) {
+    localStorage.setItem("character_id", user.main_character.character_id);
+  }
+
+  renderDashboard(user);
 }
 
 // =============================
