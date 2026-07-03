@@ -3,11 +3,15 @@
 // SESSION CHECK
 // =============================
 
+
 const session = localStorage.getItem("loggedIn");
 
 if (!session) {
   window.location.href = "/";
 }
+
+// mark session immediately on page load
+localStorage.setItem("loggedIn", "true");
 
 const RENDER_URL = "https://everecruiter-api.onrender.com";
 
