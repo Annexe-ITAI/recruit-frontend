@@ -28,7 +28,9 @@ function requireAuth() {
 // =============================
 
 async function init() {
-  // 1. Check auth FIRST
+  // 
+  localStorage.setItem("loggedIn", "true");
+  
   if (!requireAuth()) return;
 
   // 2. Load dashboard data
@@ -53,8 +55,7 @@ async function loadDashboard() {
 
     const data = await res.json();
 
-    // 3. Only confirm session AFTER successful auth + data load
-    localStorage.setItem("loggedIn", "true");
+
 
     if (data?.main_character?.character_id) {
       localStorage.setItem("character_id", data.main_character.character_id);
