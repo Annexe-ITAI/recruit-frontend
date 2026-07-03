@@ -2,12 +2,26 @@
 <html>
 <head>
   <title>Recruitment Portal</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
-  <h1>INEXTREMIS RECRUITMENT</h1>
+  <div class="container">
+    <h1>INEXTREMIS</h1>
+    <h2>Recruitment System</h2>
 
-  <p>Frontend is working 🎉</p>
+    <p>Login with your EVE Online account to continue</p>
+
+    <a id="loginBtn" class="button">
+      Login with EVE Online
+    </a>
+  </div>
+
+  <script>
+    const RENDER_URL = "https://YOUR-RENDER-URL.onrender.com";
+    document.getElementById("loginBtn").href =
+      `${RENDER_URL}/auth/eve/login`;
+  </script>
 
 </body>
 </html>
