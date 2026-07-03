@@ -5,42 +5,48 @@
 const RENDER_URL = "https://everecruiter-api.onrender.com";
 
 // =============================
-// AUTH GUARD (single source of truth)
+// INIT
 // =============================
 
-async function authGuard() {
-  const token = localStorage.getItem("session_token");
+async function init() {
+  const session = new URLSearchParams(window.location.search).get("session");
 
-  if (!token) {
+  if (!session) {
     window.location.href = "/";
-    return null;
+    return;
   }
 
-  try {
-    const res = await fetch(`${RENDER_URL}/api/me`, {
-      headers: {
-        Authorization: token
-      }
-    });
+  // keep session locally (for refresh / navigation)
+  localStorage.setItem("session", session);
 
-    if (!res.ok) {
-      throw new Error("Invalid session");
-    }
-
-    return await res.json();
-  } catch (err) {
-    console.error("Auth failed:", err);
-
-    localStorage.removeItem("session_token");
-    localStorage.removeItem("character_id");
-
-    window.location.href = "/";
-    return null;
-  }
+  await loadDashboard(session);
 }
 
 // =============================
 // LOAD DASHBOARD DATA
+// =============================
+
+async function loadDashboard(session) {
+  try {
+    const res = await fetch(`${RENDER_URL}/api/me?session=${session}`);
+
+    if (!res.ok) {
+      throw new Error("Failed to load user data");
+    }
+
+    const data = await res.json();
+
+    renderDashboard(data);
+  } catch (err) {
+    console.error("Dashboard load failed:", err);
+
+    localStorage.removeItem("session");
+    window.location.href = "/";
+  }
+}
+
+// =============================
+// RENDER UI
 // =============================
 
 function renderDashboard(data) {
@@ -86,23 +92,7 @@ function addCharacter() {
 }
 
 // =============================
-// INIT
-// =============================
-
-async function init() {
-  const user = await authGuard();
-
-  if (!user) return;
-
-  if (user?.main_character?.character_id) {
-    localStorage.setItem("character_id", user.main_character.character_id);
-  }
-
-  renderDashboard(user);
-}
-
-// =============================
-// START APP
+// START
 // =============================
 
 init();
