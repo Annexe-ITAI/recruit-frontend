@@ -1,3 +1,9 @@
+const session = localStorage.getItem("loggedIn");
+
+if (!session) {
+  window.location.href = "/";
+}
+
 const RENDER_URL = "https://everecruiter-api.onrender.com";
 
 // -----------------------------
@@ -14,6 +20,9 @@ async function loadDashboard() {
     console.error("Failed to load dashboard", err);
   }
 }
+
+localStorage.setItem("loggedIn", "true");
+localStorage.setItem("character_id", data.character_id);
 
 // -----------------------------
 // Render UI
