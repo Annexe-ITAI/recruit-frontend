@@ -1,27 +1,43 @@
-function init() {
-  const params = new URLSearchParams(window.location.search);
+async function checkAuth() {
+  try {
+    const res = await fetch("https://everecruiter-api.onrender.com/api/me", {
+      credentials: "include"
+    });
 
-  const characterId = params.get("character_id");
-  const characterName = params.get("character_name");
+    if (res.status === 401) {
+      showLogin();
+      return;
+    }
 
-  if (!characterId || !characterName) {
-    window.location.href = "/";
-    return;
+    const data = await res.json();
+    showDashboard(data);
+
+  } catch (err) {
+    showLogin();
   }
-
-  renderDashboard(characterId, characterName);
 }
 
-function renderDashboard(id, name) {
-  document.getElementById("status").innerHTML =
-    `<p>✔ EVE Authenticated</p>`;
-
-  document.getElementById("mainCharacter").innerHTML =
-    `<p><b>${name}</b></p><p>ID: ${id}</p>`;
+function showLogin() {
+  document.getElementById("loginContainer").style.display = "block";
+  document.getElementById("dashboardContainer").style.display = "none";
 }
 
-function addCharacter() {
-  window.location.href = "https://everecruiter-api.onrender.com/auth/eve/login";
+function showDashboard(data) {
+  document.getElementById("loginContainer").style.display = "none";
+  document.getElementById("dashboardContainer").style.display = "block";
+
+  document.getElementById("charName").innerText =
+    data.character.character_name;
+
+  document.getElementById("corp").innerText =
+    data.character.corporation_id;
+
+  const isMember = data.character.corporation_id === 98012419;
+
+  const applyBtn = document.getElementById("applyBtn");
+  if (applyBtn) {
+    applyBtn.style.display = isMember ? "none" : "block";
+  }
 }
 
-init();
+checkAuth();
