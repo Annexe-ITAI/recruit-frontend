@@ -89,6 +89,20 @@ function renderDashboard(data) {
 
   if (!character) {
     return showLogin();
+
+  const meta = data.meta;
+
+  document.getElementById("corp").innerText =
+    meta.corporation_name;
+  
+  document.getElementById("alliance").innerText =
+    meta.alliance_name || "No Alliance";
+
+    const portrait = document.getElementById("portrait");
+
+if (portrait) {
+  portrait.src = meta.portrait_url;
+}
   }
 
   // --------------------
