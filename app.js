@@ -8,7 +8,11 @@ function getSession() {
   const urlSession = urlParams.get("session");
 
   if (urlSession) {
-    localStorage.setItem("session_token", urlSession);
+    localStorage.setItem("session_id", urlSession);
+
+    // clean URL so it doesn't re-trigger
+    window.history.replaceState({}, document.title, "/dashboard");
+
     return urlSession;
   }
 
