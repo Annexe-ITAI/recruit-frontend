@@ -15,32 +15,32 @@ function setToken(token) {
 }
 
 async function checkAuth() {
-  try {
-    const token = getToken();
+  const token = getToken();
 
-    if (!token) {
-      showLogin();
-      return;
-    }
-
-    const res = await fetch("/api/me", {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    });
-
-    if (!res.ok) {
-      showLogin();
-      return;
-    }
-
-    const data = await res.json();
-    showDashboard(data);
-
-  } catch (err) {
+  if (!token) {
+    console.log("NO TOKEN FOUND");
     showLogin();
+    return;
   }
+
+  const res = await fetch("/api/me", {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  });
+
+  const text = await res.text();
+  console.log("API RESPONSE:", res.status, text);
+
+  if (!res.ok) {
+    showLogin();
+    return;
+  }
+
+  const data = JSON.parse(text);
+  showDashboard(data);
 }
+
 
 function showLogin() {
   document.getElementById("loginContainer").style.display = "block";
