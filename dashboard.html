@@ -11,7 +11,6 @@
   <h2 id="charName"></h2>
   <p id="corp"></p>
   <p id="alliance"></p>
-
   <p id="status"></p>
 
   <button id="applyBtn" style="display:none;">
@@ -19,45 +18,7 @@
   </button>
 </div>
 
-<script>
-const TOOL_CORP_ID = 98012419;
-
-// TEMP: we pass character_id via URL
-const params = new URLSearchParams(window.location.search);
-const characterId = params.get("character_id");
-
-async function loadDashboard() {
-  const res = await fetch(
-    `https://everecruiter-api.onrender.com/api/me?character_id=${characterId}`
-  );
-
-  const data = await res.json();
-
-  const { user, character } = data;
-
-  document.getElementById("content").style.display = "block";
-
-  document.getElementById("charName").innerText =
-    character.character_name;
-
-  document.getElementById("corp").innerText =
-    "Corp ID: " + character.corporation_id;
-
-  document.getElementById("alliance").innerText =
-    "Alliance ID: " + (character.alliance_id || "None");
-
-  const isMember = character.corporation_id === TOOL_CORP_ID;
-
-  document.getElementById("status").innerText =
-    isMember ? "Member Access" : "External Applicant";
-
-  if (!isMember) {
-    document.getElementById("applyBtn").style.display = "block";
-  }
-}
-
-loadDashboard();
-</script>
+<script src="app.js"></script>
 
 </body>
 </html>
