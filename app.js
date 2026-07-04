@@ -1,44 +1,48 @@
 const API_URL = "https://everecruiter-api.onrender.com";
 
 // =============================
-// SESSION
+// COOKIE HELPERS
 // =============================
-function getSession() {
-  const urlParams = new URLSearchParams(window.location.search);
-  const urlSession = urlParams.get("session");
+function getCookie(name) {
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) return parts.pop().split(";").shift();
+  return null;
+}
 
-  if (urlSession) {
-    localStorage.setItem("session_id", urlSession);
+// =============================
+// SESSION (COOKIE-BASED)
+// =============================
+function getCharacterId() {
+  const characterId = getCookie("character_id");
 
-    // clean URL so it doesn't re-trigger
-    window.history.replaceState({}, document.title, "/dashboard");
+  if (!characterId) return null;
 
-    return urlSession;
-  }
-
-  return localStorage.getItem("session_id");
+  return characterId;
 }
 
 // =============================
 // INIT
 // =============================
 async function init() {
-  const session = getSession();
+  const character_id = getCharacterId();
 
-  if (!session) {
+  if (!character_id) {
     window.location.href = "/";
     return;
   }
 
-  await loadDashboard(session);
+  await loadDashboard(character_id);
 }
 
 // =============================
 // LOAD DASHBOARD
 // =============================
-async function loadDashboard(session) {
+async function loadDashboard(character_id) {
   try {
-    const res = await fetch(`${API_URL}/api/me?session=${session}`);
+    const res = await fetch(
+      `${API_URL}/api/me?character_id=${character_id}`
+    );
 
     if (!res.ok) {
       throw new Error("Invalid session");
@@ -49,25 +53,41 @@ async function loadDashboard(session) {
     renderDashboard(data);
 
   } catch (err) {
-    console.error(err);
+    console.error("Dashboard load failed:", err);
 
-    localStorage.removeItem("session_id");
     window.location.href = "/";
   }
 }
 
 // =============================
-// UI
+// RENDER UI
 // =============================
 function renderDashboard(data) {
-  document.getElementById("status").innerHTML =
-    `<p>✔ EVE Authenticated</p>`;
+  document.getElementById("status").innerHTML = `
+    <p>✔ EVE Authenticated</p>
+  `;
 
-  document.getElementById("mainCharacter").innerHTML =
-    `<p><b>${data.main_character.name}</b></p>`;
+  document.getElementById("mainCharacter").innerHTML = `
+    <div class="card-title">Main Character</div>
+    <p><b>${data.main_character.name}</b></p>
+    <p>Corp: ${data.main_character.corporation}</p>
+    <p>Alliance: ${data.main_character.alliance || "None"}</p>
+  `;
 
   const alts = document.getElementById("alts");
   alts.innerHTML = "";
+
+  if (Array.isArray(data.alts)) {
+    data.alts.forEach(c => {
+      const div = document.createElement("div");
+      div.className = "card";
+      div.innerHTML = `
+        <p><b>${c.name}</b></p>
+        <p>Corp: ${c.corporation}</p>
+      `;
+      alts.appendChild(div);
+    });
+  }
 }
 
 // =============================
@@ -77,5 +97,7 @@ function addCharacter() {
   window.location.href = `${API_URL}/auth/eve/login`;
 }
 
+// =============================
+// START
 // =============================
 init();
