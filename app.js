@@ -1,98 +1,123 @@
-// =============================
-// CONFIG
-// =============================
-console.log("FORCE SYNC TEST");
+const API_URL = "https://everecruiter-api.onrender.com";
 
-const RENDER_URL = "https://everecruiter-api.onrender.com";
+// =============================
+// SESSION
+// =============================
+function getSessionToken() {
+  return localStorage.getItem("session_token");
+}
+
+function setSessionToken(token) {
+  localStorage.setItem("session_token", token);
+}
+
+// =============================
+// AUTH GUARD
+// =============================
+function requireAuth() {
+  const token = getSessionToken();
+
+  if (!token) {
+    window.location.href = "/";
+    return false;
+  }
+
+  return true;
+}
 
 // =============================
 // INIT
 // =============================
-
 async function init() {
-  const session = new URLSearchParams(window.location.search).get("session");
+  const token = getSessionToken();
 
-  if (!session) {
+  if (!token) {
     window.location.href = "/";
     return;
   }
 
-  // keep session locally (for refresh / navigation)
-  localStorage.setItem("session", session);
-
-  await loadDashboard(session);
+  await loadDashboard();
 }
 
 // =============================
 // LOAD DASHBOARD DATA
 // =============================
-
-async function loadDashboard(session) {
+async function loadDashboard() {
   try {
-    const res = await fetch(`${RENDER_URL}/api/me?session=${session}`);
+    const res = await fetch(`${API_URL}/api/me`, {
+      method: "GET",
+      headers: {
+        Authorization: getSessionToken()
+      }
+    });
 
     if (!res.ok) {
-      throw new Error("Failed to load user data");
+      throw new Error("Unauthorized or failed request");
     }
 
     const data = await res.json();
 
     renderDashboard(data);
-} catch (err) {
-  console.error("Dashboard load failed:", err);
-  alert("Dashboard failed");
-}
-  
+
+  } catch (err) {
+    console.error("Dashboard failed:", err);
+
+    localStorage.removeItem("session_token");
+
+    window.location.href = "/";
+  }
 }
 
 // =============================
 // RENDER UI
 // =============================
-
 function renderDashboard(data) {
   const status = document.getElementById("status");
   const main = document.getElementById("mainCharacter");
   const alts = document.getElementById("alts");
 
-  status.innerHTML = `
-    <p>✔ EVE Authenticated</p>
-    <p>✔ Discord: ${data.discord?.linked ? "Linked" : "Not Linked"}</p>
-  `;
+  if (status) {
+    status.innerHTML = `
+      <p>✔ EVE Authenticated</p>
+    `;
+  }
 
-  main.innerHTML = `
-    <div class="card-title">Main Character</div>
-    <p><b>${data.main_character.name}</b></p>
-    <p>Corp: ${data.main_character.corporation}</p>
-    <p>Alliance: ${data.main_character.alliance || "None"}</p>
-    <p>✔ Registered</p>
-  `;
+  if (main && data.main_character) {
+    main.innerHTML = `
+      <div class="card-title">Main Character</div>
+      <p><b>${data.main_character.name}</b></p>
+      <p>Corp: ${data.main_character.corporation || "Unknown"}</p>
+      <p>Alliance: ${data.main_character.alliance || "None"}</p>
+    `;
+  }
 
-  alts.innerHTML = "";
+  if (alts) {
+    alts.innerHTML = "";
 
-  if (Array.isArray(data.alts)) {
-    data.alts.forEach(c => {
-      const div = document.createElement("div");
-      div.className = "card";
-      div.innerHTML = `
-        <p><b>${c.name}</b></p>
-        <p>Corp: ${c.corporation}</p>
-        <p>✔ Registered</p>
-      `;
-      alts.appendChild(div);
-    });
+    if (Array.isArray(data.alts)) {
+      data.alts.forEach(c => {
+        const div = document.createElement("div");
+        div.className = "card";
+
+        div.innerHTML = `
+          <p><b>${c.name}</b></p>
+          <p>Corp: ${c.corporation || "Unknown"}</p>
+        `;
+
+        alts.appendChild(div);
+      });
+    }
   }
 }
 
 // =============================
-// ADD CHARACTER FLOW
+// ADD CHARACTER
 // =============================
-
 function addCharacter() {
-  window.location.href = `${RENDER_URL}/auth/eve/login`;
+  window.location.href = `${API_URL}/auth/eve/login`;
 }
 
 // =============================
 // START
 // =============================
-
 init();
