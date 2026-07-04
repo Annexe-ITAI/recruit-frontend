@@ -16,11 +16,20 @@ function setToken(token) {
 
 async function checkAuth() {
   try {
+    const token = getToken();
+
+    if (!token) {
+      showLogin();
+      return;
+    }
+
     const res = await fetch("https://everecruiter-api.onrender.com/api/me", {
-      credentials: "include"
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
     });
 
-    if (res.status === 401) {
+    if (!res.ok) {
       showLogin();
       return;
     }
