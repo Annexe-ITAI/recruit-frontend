@@ -1,26 +1,20 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Recruitment Portal</title>
-  <link rel="stylesheet" href="styles.css">
+  <title>Recruitment System</title>
 </head>
 <body>
 
-  <div class="container">
-    <h1>INEXTREMIS</h1>
-    <h2>Recruitment System</h2>
+  <h1>[Corporation Name] - EVE Recruitment System</h1>
 
-    <p>Login with your EVE Online account to continue</p>
-
-    <a id="loginBtn" class="button">
-      Login with EVE Online
-    </a>
-  </div>
+  <button onclick="loginWithEve()">
+    Login with EVE Online
+  </button>
 
   <script>
-    const RENDER_URL = "https://everecruiter-api.onrender.com";
-    document.getElementById("loginBtn").href =
-      `${RENDER_URL}/auth/eve/login`;
+    function loginWithEve() {
+      window.location.href = "https://recruit.inextremis.co/auth/eve/login";
+    }
   </script>
 
 </body>
