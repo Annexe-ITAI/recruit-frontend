@@ -1,6 +1,7 @@
 // =============================
 // CONFIG
 // =============================
+console.log("FORCE SYNC TEST");
 
 const RENDER_URL = "https://everecruiter-api.onrender.com";
 
