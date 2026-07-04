@@ -1,3 +1,19 @@
+const urlParams = new URLSearchParams(window.location.search);
+const tokenFromUrl = urlParams.get("token");
+
+if (tokenFromUrl) {
+  setToken(tokenFromUrl);
+  window.history.replaceState({}, document.title, "/dashboard");
+}
+
+function getToken() {
+  return localStorage.getItem("session");
+}
+
+function setToken(token) {
+  localStorage.setItem("session", token);
+}
+
 async function checkAuth() {
   try {
     const res = await fetch("https://everecruiter-api.onrender.com/api/me", {
