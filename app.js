@@ -25,20 +25,28 @@ function getCharacterId() {
 // INIT
 // =============================
 async function init() {
-  const debug = new URLSearchParams(window.location.search).get("debug");
+  try {
+    // 1. Ask backend: "who am I?"
+    const res = await fetch("https://everecruiter-api.onrender.com/api/me", {
+      credentials: "include"
+    });
 
-  if (debug === "1") {
-    console.log("DEBUG MODE: bypass auth enabled");
-  } else {
-    const character_id = getCharacterId();
-
-    if (!character_id) {
+    // 2. If not logged in → redirect
+    if (!res.ok) {
       window.location.href = "/";
       return;
     }
-  }
 
-  await loadDashboard(getCharacterId());
+    // 3. Get user data
+    const data = await res.json();
+
+    // 4. Render dashboard
+    renderDashboard(data);
+
+  } catch (err) {
+    console.error("Auth check failed:", err);
+    window.location.href = "/";
+  }
 }
 
 // =============================
