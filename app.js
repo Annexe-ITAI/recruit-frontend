@@ -1,3 +1,8 @@
+const TOOL_CORP_ID = 98012419;
+
+// --------------------
+// TOKEN HANDLING
+// --------------------
 const urlParams = new URLSearchParams(window.location.search);
 const tokenFromUrl = urlParams.get("token");
 
@@ -14,55 +19,86 @@ function setToken(token) {
   localStorage.setItem("session", token);
 }
 
+// --------------------
+// AUTH CHECK
+// --------------------
 async function checkAuth() {
   const token = getToken();
 
   if (!token) {
-    console.log("NO TOKEN FOUND");
     showLogin();
     return;
   }
 
-  const res = await fetch("/api/me", {
-    headers: {
-      Authorization: `Bearer ${token}`
+  try {
+    const res = await fetch("/api/me", {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+
+    const text = await res.text();
+    console.log("API RESPONSE:", res.status, text);
+
+    if (!res.ok) {
+      showLogin();
+      return;
     }
-  });
 
-  const text = await res.text();
-  console.log("API RESPONSE:", res.status, text);
+    const data = JSON.parse(text);
+    showDashboard(data);
 
-  if (!res.ok) {
+  } catch (err) {
+    console.error(err);
     showLogin();
-    return;
   }
-
-  const data = JSON.parse(text);
-  showDashboard(data);
 }
 
+// --------------------
+// UI STATES
+// --------------------
+function showLoading(show) {
+  document.getElementById("loading").style.display = show ? "block" : "none";
+}
 
 function showLogin() {
+  showLoading(false);
   document.getElementById("loginContainer").style.display = "block";
   document.getElementById("dashboardContainer").style.display = "none";
 }
 
 function showDashboard(data) {
+  showLoading(false);
+
   document.getElementById("loginContainer").style.display = "none";
   document.getElementById("dashboardContainer").style.display = "block";
 
+  const character = data?.character;
+
+  if (!character) {
+    showLogin();
+    return;
+  }
+
   document.getElementById("charName").innerText =
-    data.character.character_name;
+    character.character_name;
 
   document.getElementById("corp").innerText =
-    data.character.corporation_id;
+    "Corp ID: " + character.corporation_id;
 
-  const isMember = data.character.corporation_id === 98012419;
+  document.getElementById("alliance").innerText =
+    "Alliance ID: " + (character.alliance_id || "None");
+
+  const isMember = character.corporation_id === TOOL_CORP_ID;
+
+  document.getElementById("status").innerText =
+    isMember ? "Member Access" : "External Applicant";
 
   const applyBtn = document.getElementById("applyBtn");
-  if (applyBtn) {
-    applyBtn.style.display = isMember ? "none" : "block";
-  }
+  applyBtn.style.display = isMember ? "none" : "block";
 }
 
+// --------------------
+// START APP
+// --------------------
 checkAuth();
