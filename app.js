@@ -25,14 +25,20 @@ function getCharacterId() {
 // INIT
 // =============================
 async function init() {
-  const character_id = getCharacterId();
+  const debug = new URLSearchParams(window.location.search).get("debug");
 
-  if (!character_id) {
-    window.location.href = "/";
-    return;
+  if (debug === "1") {
+    console.log("DEBUG MODE: bypass auth enabled");
+  } else {
+    const character_id = getCharacterId();
+
+    if (!character_id) {
+      window.location.href = "/";
+      return;
+    }
   }
 
-  await loadDashboard(character_id);
+  await loadDashboard(getCharacterId());
 }
 
 // =============================
