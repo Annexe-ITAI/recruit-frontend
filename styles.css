@@ -1,46 +1,116 @@
-body {
-  font-family: Arial, sans-serif;
-  background: #0b0f14;
-  color: #ffffff;
+/* -------------------------
+   GLOBAL RESET
+------------------------- */
+* {
   margin: 0;
   padding: 0;
+  box-sizing: border-box;
+  font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
 }
 
-.container {
-  max-width: 800px;
-  margin: auto;
+body {
+  background: #0b0f17;
+  color: #e6eaf2;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* -------------------------
+   LOADING
+------------------------- */
+#loading {
+  text-align: center;
+  font-size: 18px;
+  opacity: 0.7;
+}
+
+/* -------------------------
+   LOGIN CONTAINER
+------------------------- */
+#loginContainer {
+  text-align: center;
+  background: #121826;
   padding: 40px;
+  border-radius: 14px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.4);
 }
 
-h1 {
-  margin-bottom: 5px;
+#loginContainer h1 {
+  margin-bottom: 20px;
 }
 
-h2 {
-  color: #888;
-  margin-top: 0;
-}
-
-.button {
+#loginContainer a {
   display: inline-block;
   padding: 12px 20px;
-  background: #1f6feb;
+  background: #4f7cff;
   color: white;
-  border-radius: 6px;
   text-decoration: none;
-  cursor: pointer;
-  margin-top: 20px;
-}
-
-.card {
-  background: #161b22;
-  padding: 15px;
-  margin: 10px 0;
   border-radius: 8px;
+  font-weight: 600;
 }
 
-.card-title {
-  font-weight: bold;
-  margin-bottom: 5px;
-  color: #58a6ff;
+#loginContainer a:hover {
+  background: #3b66e3;
+}
+
+/* -------------------------
+   DASHBOARD
+------------------------- */
+#dashboardContainer {
+  width: 100%;
+  max-width: 600px;
+  background: #121826;
+  padding: 30px;
+  border-radius: 16px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+}
+
+/* CHARACTER NAME */
+#charName {
+  font-size: 26px;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+/* INFO TEXT */
+#corp, #alliance, #status {
+  font-size: 14px;
+  opacity: 0.85;
+  margin-bottom: 8px;
+}
+
+/* STATUS BADGE STYLE */
+#status {
+  display: inline-block;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: #1f2a3d;
+  margin-top: 10px;
+}
+
+/* -------------------------
+   APPLY BUTTON
+------------------------- */
+#applyBtn {
+  margin-top: 20px;
+  width: 100%;
+  padding: 12px;
+  background: #22c55e;
+  border: none;
+  border-radius: 10px;
+  font-weight: 600;
+  color: white;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+#applyBtn:hover {
+  background: #16a34a;
+  transform: translateY(-1px);
+}
+
+#applyBtn:active {
+  transform: scale(0.98);
 }
