@@ -23,7 +23,7 @@ async function checkAuth() {
       return;
     }
 
-    const res = await fetch("https://everecruiter-api.onrender.com/api/me", {
+    const res = await fetch("/api/me", {
       headers: {
         Authorization: `Bearer ${token}`
       }
