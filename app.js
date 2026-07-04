@@ -4,32 +4,22 @@ const API_URL = "https://everecruiter-api.onrender.com";
 // INIT
 // =============================
 async function init() {
-  try {
-    const character_id = new URLSearchParams(window.location.search).get("character_id");
+  const session = new URLSearchParams(window.location.search).get("session");
 
-    if (!character_id) {
-      window.location.href = "/";
-      return;
-    }
-
-    localStorage.setItem("character_id", character_id);
-
-    const res = await fetch(
-      `${API_URL}/api/me?character_id=${character_id}`
-    );
-
-    if (!res.ok) {
-      window.location.href = "/";
-      return;
-    }
-
-    const data = await res.json();
-    renderDashboard(data);
-
-  } catch (err) {
-    console.error("Auth check failed:", err);
+  if (!session) {
     window.location.href = "/";
+    return;
   }
+
+  const res = await fetch(`${API_URL}/api/me?session=${session}`);
+
+  if (!res.ok) {
+    window.location.href = "/";
+    return;
+  }
+
+  const data = await res.json();
+  renderDashboard(data);
 }
 
 // =============================
