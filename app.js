@@ -12,7 +12,7 @@ function getSession() {
     return urlSession;
   }
 
-  return localStorage.getItem("session_token");
+  return localStorage.getItem("session_id");
 }
 
 // =============================
@@ -47,7 +47,7 @@ async function loadDashboard(session) {
   } catch (err) {
     console.error(err);
 
-    localStorage.removeItem("session_token");
+    localStorage.removeItem("session_id");
     window.location.href = "/";
   }
 }
