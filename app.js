@@ -20,6 +20,15 @@ function setToken(token) {
 }
 
 // --------------------
+// AUTO REDIRECT (IMPORTANT)
+// --------------------
+const existingToken = getToken();
+
+if (existingToken && window.location.pathname === "/") {
+  window.location.href = "/dashboard";
+}
+
+// --------------------
 // AUTH CHECK
 // --------------------
 async function checkAuth() {
