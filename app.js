@@ -37,12 +37,11 @@ async function loadDashboard(session) {
     const data = await res.json();
 
     renderDashboard(data);
-  } catch (err) {
-    console.error("Dashboard load failed:", err);
-
-    localStorage.removeItem("session");
-    window.location.href = "/";
-  }
+} catch (err) {
+  console.error("Dashboard load failed:", err);
+  alert("Dashboard failed");
+}
+  
 }
 
 // =============================
