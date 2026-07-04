@@ -1,109 +1,63 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>ITAI Recruitment Dashboard</title>
-
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #0b0f17;
-      color: #e6e6e6;
-      margin: 0;
-      padding: 0;
-    }
-
-    .container {
-      max-width: 900px;
-      margin: 40px auto;
-      padding: 20px;
-    }
-
-    .card {
-      background: #151c2b;
-      border-radius: 12px;
-      padding: 20px;
-      margin-bottom: 20px;
-    }
-
-    .header {
-      display: flex;
-      align-items: center;
-      gap: 20px;
-    }
-
-    #portrait {
-      width: 96px;
-      height: 96px;
-      border-radius: 12px;
-    }
-
-    h1 {
-      margin: 0;
-      font-size: 24px;
-    }
-
-    .muted {
-      color: #9aa4b2;
-      font-size: 14px;
-    }
-
-    button {
-      padding: 10px 14px;
-      background: #2d6cdf;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-    }
-
-    button:hover {
-      background: #2457b5;
-    }
-
-    .row {
-      margin-top: 10px;
-    }
-  </style>
+  <title>Dashboard</title>
 </head>
-
 <body>
 
-  <div class="container">
+<h1>Loading dashboard...</h1>
 
-    <!-- HEADER -->
-    <div class="card header">
-      <img id="portrait" src="" alt="portrait" />
-      <div>
-        <h1 id="characterName">Loading...</h1>
-        <div class="muted" id="corp">Corporation: ...</div>
-        <div class="muted" id="alliance">Alliance: ...</div>
-      </div>
-    </div>
+<div id="content" style="display:none;">
+  <h2 id="charName"></h2>
+  <p id="corp"></p>
+  <p id="alliance"></p>
 
-    <!-- STATUS -->
-    <div class="card">
-      <h3>Recruitment Status</h3>
-      <div id="status">Loading...</div>
-    </div>
+  <p id="status"></p>
 
-    <!-- RAW DATA -->
-    <div class="card">
-      <h3>Character Data</h3>
-      <div class="row" id="characterId"></div>
-      <div class="row" id="corporationId"></div>
-      <div class="row" id="allianceId"></div>
-    </div>
+  <button id="applyBtn" style="display:none;">
+    I have applied to corp in-game
+  </button>
+</div>
 
-    <!-- ACTIONS -->
-    <div class="card">
-      <h3>Actions</h3>
-      <button onclick="logout()">Logout</button>
-    </div>
+<script>
+const TOOL_CORP_ID = 98012419;
 
-  </div>
+// TEMP: we pass character_id via URL
+const params = new URLSearchParams(window.location.search);
+const characterId = params.get("character_id");
 
-  <script src="app.js"></script>
+async function loadDashboard() {
+  const res = await fetch(
+    `https://everecruiter-api.onrender.com/api/me?character_id=${characterId}`
+  );
+
+  const data = await res.json();
+
+  const { user, character } = data;
+
+  document.getElementById("content").style.display = "block";
+
+  document.getElementById("charName").innerText =
+    character.character_name;
+
+  document.getElementById("corp").innerText =
+    "Corp ID: " + character.corporation_id;
+
+  document.getElementById("alliance").innerText =
+    "Alliance ID: " + (character.alliance_id || "None");
+
+  const isMember = character.corporation_id === TOOL_CORP_ID;
+
+  document.getElementById("status").innerText =
+    isMember ? "Member Access" : "External Applicant";
+
+  if (!isMember) {
+    document.getElementById("applyBtn").style.display = "block";
+  }
+}
+
+loadDashboard();
+</script>
+
 </body>
 </html>
