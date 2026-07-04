@@ -1,3 +1,5 @@
+checkAuth();
+
 const TOOL_CORP_ID = 98012419;
 
 // --------------------
@@ -24,7 +26,7 @@ function setToken(token) {
 // --------------------
 const existingToken = getToken();
 
-if (existingToken && window.location.pathname === "/") {
+if (existingToken && !window.location.pathname.includes("dashboard")) {
   window.location.href = "/dashboard";
 }
 
