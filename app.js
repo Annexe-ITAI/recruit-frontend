@@ -1,5 +1,3 @@
-checkAuth();
-
 const TOOL_CORP_ID = 98012419;
 
 // --------------------
@@ -22,13 +20,9 @@ function setToken(token) {
 }
 
 // --------------------
-// AUTO REDIRECT (IMPORTANT)
+// START APP
 // --------------------
-const existingToken = getToken();
-
-if (existingToken && !window.location.pathname.includes("dashboard")) {
-  window.location.href = "/dashboard";
-}
+checkAuth();
 
 // --------------------
 // AUTH CHECK
@@ -37,8 +31,7 @@ async function checkAuth() {
   const token = getToken();
 
   if (!token) {
-    showLogin();
-    return;
+    return showLogin();
   }
 
   try {
@@ -48,16 +41,12 @@ async function checkAuth() {
       }
     });
 
-    const text = await res.text();
-    console.log("API RESPONSE:", res.status, text);
-
     if (!res.ok) {
-      showLogin();
-      return;
+      return showLogin();
     }
 
-    const data = JSON.parse(text);
-    showDashboard(data);
+    const data = await res.json();
+    renderDashboard(data);
 
   } catch (err) {
     console.error(err);
@@ -69,47 +58,108 @@ async function checkAuth() {
 // UI STATES
 // --------------------
 function showLoading(show) {
-  document.getElementById("loading").style.display = show ? "block" : "none";
+  const el = document.getElementById("loading");
+  if (el) el.style.display = show ? "block" : "none";
 }
 
 function showLogin() {
   showLoading(false);
-  document.getElementById("loginContainer").style.display = "block";
-  document.getElementById("dashboardContainer").style.display = "none";
+
+  const login = document.getElementById("loginContainer");
+  const dash = document.getElementById("dashboardContainer");
+
+  if (login) login.style.display = "block";
+  if (dash) dash.style.display = "none";
 }
 
-function showDashboard(data) {
+// --------------------
+// DASHBOARD RENDER
+// --------------------
+function renderDashboard(data) {
   showLoading(false);
 
-  document.getElementById("loginContainer").style.display = "none";
-  document.getElementById("dashboardContainer").style.display = "block";
+  const login = document.getElementById("loginContainer");
+  const dash = document.getElementById("dashboardContainer");
+
+  if (login) login.style.display = "none";
+  if (dash) dash.style.display = "block";
 
   const character = data?.character;
+  const access = data?.access;
 
   if (!character) {
-    showLogin();
-    return;
+    return showLogin();
   }
 
-  document.getElementById("charName").innerText =
-    character.character_name;
+  // --------------------
+  // BASIC INFO
+  // --------------------
+  const charName = document.getElementById("charName");
+  const corp = document.getElementById("corp");
+  const alliance = document.getElementById("alliance");
+  const status = document.getElementById("status");
 
-  document.getElementById("corp").innerText =
-    "Corp ID: " + character.corporation_id;
+  if (charName) charName.innerText = character.character_name;
 
-  document.getElementById("alliance").innerText =
-    "Alliance ID: " + (character.alliance_id || "None");
+  if (corp) {
+    corp.innerText = `Corp ID: ${character.corporation_id}`;
+  }
 
-  const isMember = character.corporation_id === TOOL_CORP_ID;
+  if (alliance) {
+    alliance.innerText = `Alliance ID: ${character.alliance_id || "None"}`;
+  }
 
-  document.getElementById("status").innerText =
-    isMember ? "Member Access" : "External Applicant";
+  // --------------------
+  // STATUS
+  // --------------------
+  const isMember = access?.isMember;
 
+  if (status) {
+    status.innerText = isMember ? "Member" : "External Applicant";
+  }
+
+  // --------------------
+  // APPLY BUTTON
+  // --------------------
   const applyBtn = document.getElementById("applyBtn");
-  applyBtn.style.display = isMember ? "none" : "block";
-}
 
-// --------------------
-// START APP
-// --------------------
-checkAuth();
+  if (applyBtn) {
+    applyBtn.style.display = isMember ? "none" : "block";
+
+    applyBtn.onclick = async () => {
+      applyBtn.innerText = "Submitting...";
+      applyBtn.disabled = true;
+
+      try {
+        const token = getToken();
+
+        const res = await fetch("/api/apply", {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+
+        if (!res.ok) throw new Error("Apply failed");
+
+        applyBtn.innerText = "Applied ✔";
+
+      } catch (err) {
+        console.error(err);
+        applyBtn.innerText = "Apply";
+        applyBtn.disabled = false;
+      }
+    };
+  }
+
+  // --------------------
+  // DISCORD BUTTON (placeholder)
+  // --------------------
+  const discordBtn = document.getElementById("discordBtn");
+
+  if (discordBtn) {
+    discordBtn.onclick = () => {
+      alert("Discord integration coming next step");
+    };
+  }
+}
