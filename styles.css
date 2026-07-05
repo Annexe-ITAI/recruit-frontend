@@ -106,3 +106,16 @@ body {
 .badge.status.approved {
   background: #2ecc71;
 }
+
+.badge.role {
+  background: #34495e;
+  margin-left: 5px;
+}
+
+.badge.role:contains("Director") {
+  background: #e74c3c;
+}
+
+.badge.role:contains("Personnel Manager") {
+  background: #f39c12;
+}
