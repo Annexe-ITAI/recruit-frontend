@@ -107,7 +107,10 @@ function renderDashboard(data) {
 
     const isMember = char.is_member;
     const status = char.recruitment_status || "new";
-
+    
+    console.log("CHAR:", char.character_name);
+    console.log("ROLE LABEL:", char.role_label);
+    
     let statusLabel = "New";
     if (status === "applied") statusLabel = "Applied";
     if (status === "approved") statusLabel = "Approved";
