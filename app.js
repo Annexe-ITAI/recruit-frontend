@@ -119,36 +119,36 @@ function renderDashboard(data) {
       <div class="char-left">
         <img src="${char.portrait_url}" class="portrait" />
       </div>
-
+    
       <div class="char-body">
         <h3>${char.character_name}</h3>
-
+    
         <p class="corp">${char.corporation_name}</p>
         <p class="alliance">${char.alliance_name || "No Alliance"}</p>
-
+    
         <div class="badges">
           <span class="badge ${isMember ? "member" : "external"}">
             ${isMember ? "Member" : "External"}
           </span>
-          
-          <span class="badge role">
-            ${char.role_label || ""}
-          </span>
+    
+          ${
+            char.role_label
+              ? `<span class="badge role">${char.role_label}</span>`
+              : ""
+          }
         </div>
       </div>
-
+    
       <div class="char-actions">
-
         ${
           isMember
             ? `<button class="btn disabled">Connected</button>`
             : `<button class="btn apply">Apply</button>`
         }
-
+    
         <button class="btn discord">
           Discord
         </button>
-
       </div>
     `;
 
