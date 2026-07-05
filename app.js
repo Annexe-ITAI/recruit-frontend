@@ -84,18 +84,97 @@ function renderDashboard(data) {
   if (login) login.style.display = "none";
   if (dash) dash.style.display = "block";
 
-  const character = data?.character;
-  const access = data?.access;
-  const meta = data?.meta;
+  const characters = data?.characters || [];
+  const main = data?.main_character;
 
-  if (!character) {
+  if (!characters.length) {
     return showLogin();
   }
 
-  const portrait = document.getElementById("portrait");
-  if (portrait && meta?.portrait_url) {
-    portrait.src = meta.portrait_url;
+  const mainName = document.getElementById("mainCharName");
+  if (mainName && main) {
+    mainName.innerText = `Main: ${main.character_name}`;
   }
+
+  const list = document.getElementById("characterList");
+  if (!list) return;
+
+  list.innerHTML = "";
+
+  characters.forEach(char => {
+    const card = document.createElement("div");
+    card.className = "character-card";
+
+    const isMember = char.is_member;
+
+    card.innerHTML = `
+      <div class="char-left">
+        <img src="${char.portrait_url}" class="portrait" />
+      </div>
+
+      <div class="char-body">
+        <h3>${char.character_name}</h3>
+
+        <p class="corp">${char.corporation_name}</p>
+        <p class="alliance">${char.alliance_name || "No Alliance"}</p>
+
+        <div class="badges">
+          <span class="badge ${isMember ? "member" : "external"}">
+            ${isMember ? "Member" : "External"}
+          </span>
+        </div>
+      </div>
+
+      <div class="char-actions">
+
+        ${
+          isMember
+            ? `<button class="btn disabled">Connected</button>`
+            : `<button class="btn apply">Apply</button>`
+        }
+
+        <button class="btn discord">
+          Discord
+        </button>
+
+      </div>
+    `;
+
+    // APPLY BUTTON
+    const applyBtn = card.querySelector(".apply");
+    if (applyBtn) {
+      applyBtn.onclick = async () => {
+        applyBtn.innerText = "Submitting...";
+        applyBtn.disabled = true;
+
+        try {
+          const token = getToken();
+
+          await fetch("/api/apply", {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          });
+
+          applyBtn.innerText = "Applied ✔";
+
+        } catch {
+          applyBtn.innerText = "Apply";
+          applyBtn.disabled = false;
+        }
+      };
+    }
+
+    // DISCORD BUTTON (placeholder)
+    const discordBtn = card.querySelector(".discord");
+    discordBtn.onclick = () => {
+      alert("Discord integration coming next step");
+    };
+
+    list.appendChild(card);
+  });
+}
 
 
   // --------------------
