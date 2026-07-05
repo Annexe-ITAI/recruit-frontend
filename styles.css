@@ -1,116 +1,95 @@
-/* -------------------------
-   GLOBAL RESET
-------------------------- */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-}
-
 body {
-  background: #0b0f17;
-  color: #e6eaf2;
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  font-family: Arial, sans-serif;
+  background: #0e0f14;
+  color: #fff;
+  margin: 0;
+  padding: 20px;
 }
 
-/* -------------------------
-   LOADING
-------------------------- */
-#loading {
+.header {
   text-align: center;
-  font-size: 18px;
-  opacity: 0.7;
-}
-
-/* -------------------------
-   LOGIN CONTAINER
-------------------------- */
-#loginContainer {
-  text-align: center;
-  background: #121826;
-  padding: 40px;
-  border-radius: 14px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.4);
-}
-
-#loginContainer h1 {
   margin-bottom: 20px;
 }
 
-#loginContainer a {
-  display: inline-block;
-  padding: 12px 20px;
-  background: #4f7cff;
-  color: white;
-  text-decoration: none;
-  border-radius: 8px;
-  font-weight: 600;
+.character-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-width: 800px;
+  margin: 0 auto;
 }
 
-#loginContainer a:hover {
-  background: #3b66e3;
-}
-
-/* -------------------------
-   DASHBOARD
-------------------------- */
-#dashboardContainer {
-  width: 100%;
-  max-width: 600px;
-  background: #121826;
-  padding: 30px;
-  border-radius: 16px;
-  box-shadow: 0 10px 40px rgba(0,0,0,0.5);
-}
-
-/* CHARACTER NAME */
-#charName {
-  font-size: 26px;
-  font-weight: 700;
-  margin-bottom: 10px;
-}
-
-/* INFO TEXT */
-#corp, #alliance, #status {
-  font-size: 14px;
-  opacity: 0.85;
-  margin-bottom: 8px;
-}
-
-/* STATUS BADGE STYLE */
-#status {
-  display: inline-block;
-  padding: 6px 10px;
-  border-radius: 999px;
-  background: #1f2a3d;
-  margin-top: 10px;
-}
-
-/* -------------------------
-   APPLY BUTTON
-------------------------- */
-#applyBtn {
-  margin-top: 20px;
-  width: 100%;
+.character-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #1a1c24;
   padding: 12px;
-  background: #22c55e;
-  border: none;
   border-radius: 10px;
-  font-weight: 600;
-  color: white;
+}
+
+.portrait {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+}
+
+.char-body {
+  flex: 1;
+  margin-left: 12px;
+}
+
+.char-body h3 {
+  margin: 0;
+}
+
+.corp, .alliance {
+  margin: 2px 0;
+  font-size: 13px;
+  color: #aaa;
+}
+
+.badge {
+  display: inline-block;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 12px;
+  margin-top: 5px;
+}
+
+.badge.member {
+  background: #2ecc71;
+}
+
+.badge.external {
+  background: #e67e22;
+}
+
+.char-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.btn {
+  padding: 6px 10px;
+  border: none;
+  border-radius: 6px;
   cursor: pointer;
-  transition: 0.2s ease;
 }
 
-#applyBtn:hover {
-  background: #16a34a;
-  transform: translateY(-1px);
+.btn.apply {
+  background: #3498db;
+  color: white;
 }
 
-#applyBtn:active {
-  transform: scale(0.98);
+.btn.discord {
+  background: #5865f2;
+  color: white;
+}
+
+.btn.disabled {
+  background: #444;
+  color: #888;
+  cursor: not-allowed;
 }
