@@ -127,9 +127,9 @@ function renderDashboard(data) {
           <span class="badge ${isMember ? "member" : "external"}">
             ${isMember ? "Member" : "External"}
           </span>
-
-          <span class="badge status ${status}">
-            ${statusLabel}
+          
+          <span class="badge role">
+            ${char.role_label || ""}
           </span>
         </div>
       </div>
