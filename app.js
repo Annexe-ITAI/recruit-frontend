@@ -106,6 +106,11 @@ function renderDashboard(data) {
     card.className = "character-card";
 
     const isMember = char.is_member;
+    const status = char.recruitment_status || "new";
+
+    let statusLabel = "New";
+    if (status === "applied") statusLabel = "Applied";
+    if (status === "approved") statusLabel = "Approved";
 
     card.innerHTML = `
       <div class="char-left">
@@ -121,6 +126,10 @@ function renderDashboard(data) {
         <div class="badges">
           <span class="badge ${isMember ? "member" : "external"}">
             ${isMember ? "Member" : "External"}
+          </span>
+
+          <span class="badge status ${status}">
+            ${statusLabel}
           </span>
         </div>
       </div>
@@ -140,8 +149,11 @@ function renderDashboard(data) {
       </div>
     `;
 
+    // --------------------
     // APPLY BUTTON
+    // --------------------
     const applyBtn = card.querySelector(".apply");
+
     if (applyBtn) {
       applyBtn.onclick = async () => {
         applyBtn.innerText = "Submitting...";
@@ -150,7 +162,7 @@ function renderDashboard(data) {
         try {
           const token = getToken();
 
-          await fetch("/api/apply", {
+          const res = await fetch("/api/apply", {
             method: "POST",
             headers: {
               Authorization: `Bearer ${token}`,
@@ -158,20 +170,28 @@ function renderDashboard(data) {
             }
           });
 
+          if (!res.ok) throw new Error("Apply failed");
+
           applyBtn.innerText = "Applied ✔";
 
-        } catch {
+        } catch (err) {
+          console.error(err);
           applyBtn.innerText = "Apply";
           applyBtn.disabled = false;
         }
       };
     }
 
-    // DISCORD BUTTON (placeholder)
+    // --------------------
+    // DISCORD BUTTON
+    // --------------------
     const discordBtn = card.querySelector(".discord");
-    discordBtn.onclick = () => {
-      alert("Discord integration coming next step");
-    };
+
+    if (discordBtn) {
+      discordBtn.onclick = () => {
+        alert("Discord integration coming next step");
+      };
+    }
 
     list.appendChild(card);
   });
