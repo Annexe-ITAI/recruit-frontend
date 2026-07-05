@@ -270,4 +270,4 @@ function renderDashboard(data) {
       alert("Discord integration coming next step");
     };
   }
-}
+
