@@ -110,6 +110,7 @@ function renderDashboard(data) {
     
     console.log("CHAR:", char.character_name);
     console.log("ROLE LABEL:", char.role_label);
+    console.log(char.character_id, roles);
     
     let statusLabel = "New";
     if (status === "applied") statusLabel = "Applied";
