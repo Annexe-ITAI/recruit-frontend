@@ -86,24 +86,17 @@ function renderDashboard(data) {
 
   const character = data?.character;
   const access = data?.access;
+  const meta = data?.meta;
 
   if (!character) {
     return showLogin();
-
-  const meta = data.meta;
-
-  document.getElementById("corp").innerText =
-    meta.corporation_name;
-  
-  document.getElementById("alliance").innerText =
-    meta.alliance_name || "No Alliance";
-
-    const portrait = document.getElementById("portrait");
-
-if (portrait) {
-  portrait.src = meta.portrait_url;
-}
   }
+
+  const portrait = document.getElementById("portrait");
+  if (portrait && meta?.portrait_url) {
+    portrait.src = meta.portrait_url;
+  }
+}
 
   // --------------------
   // BASIC INFO
@@ -116,11 +109,12 @@ if (portrait) {
   if (charName) charName.innerText = character.character_name;
 
   if (corp) {
-    corp.innerText = `Corp ID: ${character.corporation_id}`;
+    corp.innerText = meta?.corporation_name || character.corporation_id;
   }
-
+  
   if (alliance) {
-    alliance.innerText = `Alliance ID: ${character.alliance_id || "None"}`;
+    alliance.innerText =
+      meta?.alliance_name || "No Alliance";
   }
 
   // --------------------
