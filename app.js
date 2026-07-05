@@ -153,7 +153,8 @@ function renderDashboard(data) {
           await fetch("/api/apply", {
             method: "POST",
             headers: {
-              Authorization: `Bearer ${token}`
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json"
             }
           });
 
