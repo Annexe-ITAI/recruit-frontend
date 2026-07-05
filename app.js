@@ -96,7 +96,7 @@ function renderDashboard(data) {
   if (portrait && meta?.portrait_url) {
     portrait.src = meta.portrait_url;
   }
-}
+
 
   // --------------------
   // BASIC INFO
