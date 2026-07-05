@@ -77,7 +77,9 @@ function showLogin() {
 // --------------------
 function renderDashboard(data) {
   showLoading(false);
-
+  
+  console.log("FULL API RESPONSE:", data);
+  
   const login = document.getElementById("loginContainer");
   const dash = document.getElementById("dashboardContainer");
 
