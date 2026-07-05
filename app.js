@@ -220,7 +220,7 @@ function renderDashboard(data) {
   // --------------------
   // STATUS
   // --------------------
-  const isMember = access?.isMember;
+  const isMember = character.corporation_id === TOOL_CORP_ID;
 
   if (status) {
     status.innerText = isMember ? "Member" : "External Applicant";
